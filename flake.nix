@@ -1,5 +1,5 @@
 {
-  description = "A very basic flake";
+  description = "Nix software packages that I used in my systems.";
 
   inputs = {
     # nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst";
