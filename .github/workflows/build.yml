@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    name: Build on ${{ matrix.platform.name }}
+    name: Build ${{ matrix.package }} on ${{ matrix.platform.name }}
 
     runs-on: ${{ matrix.platform.runner }}
 
@@ -23,6 +23,10 @@ jobs:
       fail-fast: false
 
       matrix:
+        package:
+          - herdr
+          - pi-agent
+
         platform:
           - name: x86_64-linux
             runner: ubuntu-24.04
@@ -50,7 +54,7 @@ jobs:
         shell: bash
         # set -o pipefail
         run: >
-          nix build .#herdr .#pi-agent
+          nix build .#${{ matrix.package }}
           --no-link --print-out-paths
           --print-build-logs --show-trace
           --log-format raw
