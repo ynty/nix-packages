@@ -57,3 +57,7 @@ jobs:
             --show-trace \
             --option log-lines 1000 \
             2>&1 | tee nix-build.log
+
+      - name: Show Package Info
+        shell: bash
+        run: nix path-info -r ./result
