@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.package }} on ${{ matrix.platform.name }}
+    name: Build on ${{ matrix.platform.name }}
 
     runs-on: ${{ matrix.platform.runner }}
 
@@ -23,10 +23,6 @@ jobs:
       fail-fast: false
 
       matrix:
-        package:
-          - herdr
-          - pi-agent
-
         platform:
           - name: x86_64-linux
             runner: ubuntu-24.04
@@ -43,18 +39,19 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          # nix_path: nixpkgs=channel:nixos-unstable
+
+      - uses: cachix/cachix-action@v17
+        with:
+          name: '${{ secrets.CACHIX_CACHE_NAME }}'
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Build Package
         shell: bash
-        run: |
-          set -o pipefail
-          nix build .#${{ matrix.package }} \
-            --log-format raw \
-            --print-build-logs \
-            --show-trace \
-            --option log-lines 1000 \
-            2>&1 | tee nix-build.log
-
-      # - name: Show Package Info
-      #   shell: bash
-      #   run: nix path-info -r ./result
+        # set -o pipefail
+        run: >
+          nix build .#herdr .#pi-agent
+          --no-link --print-out-paths
+          --print-build-logs --show-trace
+          --log-format raw
+          --option log-lines 1000
