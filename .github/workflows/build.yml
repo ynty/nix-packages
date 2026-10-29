@@ -30,10 +30,13 @@ jobs:
         platform:
           - name: x86_64-linux
             runner: ubuntu-24.04
+            nixpkgs: nixos-26.05
           - name: aarch64-linux
             runner: ubuntu-24.04-arm
+            nixpkgs: nixos-26.05
           - name: aarch64-darwin
             runner: macos-latest
+            nixpkgs: nixpkgs-26.05-darwin
         # include:
         # exclude:
 
@@ -43,7 +46,7 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-          # nix_path: nixpkgs=channel:nixos-unstable
+          nix_path: nixpkgs=channel:${{ matrix.platform.nixpkgs }}
 
       - uses: cachix/cachix-action@v17
         with:
@@ -62,7 +65,9 @@ jobs:
       - name: Push to Cachix
         shell: bash
         run: |
-          paths_output=$(nix path-info --recursive ./result) || exit 1
-          printf '%s\n' "$paths_output"
-          mapfile -t paths <<< "$paths_output"
-          cachix push ${{ secrets.CACHIX_CACHE_NAME }} "${paths[@]}"
+          nix-shell -p bash --run '
+            paths_output=$(nix path-info --recursive ./result) || exit 1
+            printf '%s\n' "$paths_output"
+            mapfile -t paths <<< "$paths_output"
+            cachix push ${{ secrets.CACHIX_CACHE_NAME }} "${paths[@]}"
+          '
