@@ -49,13 +49,20 @@ jobs:
         with:
           name: '${{ secrets.CACHIX_CACHE_NAME }}'
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          skipPush: true
 
       - name: Build Package
         shell: bash
-        # set -o pipefail
         run: >
           nix build .#${{ matrix.package }}
-          --no-link --print-out-paths
           --print-build-logs --show-trace
           --log-format raw
           --option log-lines 1000
+
+      - name: Push to Cachix
+        shell: bash
+        run: |
+          paths_output=$(nix path-info --recursive ./result) || exit 1
+          printf '%s\n' "$paths_output"
+          mapfile -t paths <<< "$paths_output"
+          cachix push ${{ secrets.CACHIX_CACHE_NAME }} "${paths[@]}"
