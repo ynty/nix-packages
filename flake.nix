@@ -15,7 +15,7 @@
     };
 
     pi-agent = {
-      url = "github:earendil-works/pi/v1.3.0";
+      url = "github:earendil-works/pi/stable";
       inputs = {
         nixpkgs.follows = "nixpkgs-unstable";
       };
