@@ -6,20 +6,6 @@
     nixpkgs-unstable = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
-
-    herdr = {
-      url = "github:herdrdev/herdr/v0.9.5";
-      inputs = {
-        nixpkgs.follows = "nixpkgs-unstable";
-      };
-    };
-
-    pi-agent = {
-      url = "github:earendil-works/pi/stable";
-      inputs = {
-        nixpkgs.follows = "nixpkgs-unstable";
-      };
-    };
   };
 
   outputs =

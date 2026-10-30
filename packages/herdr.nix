@@ -1,1 +1,5 @@
-{ inputs, system }: inputs.herdr.packages.${system}.default
+{ inputs, system }:
+let
+  pkgs = inputs.nixpkgs-unstable.legacyPackages.${system};
+in
+  pkgs.herdr
